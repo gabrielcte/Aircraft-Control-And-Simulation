@@ -1,0 +1,10 @@
+<launch>
+      
+<rosparam file="$(find your_package)/config/gazebo_ros_control_params.yaml" command="load" />
+
+<node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
+output="screen" --namespace=gazebo/gazebo_ros_control joint_state_controller joint_motor_controller"/>
+</node>
+
+
+</launch>

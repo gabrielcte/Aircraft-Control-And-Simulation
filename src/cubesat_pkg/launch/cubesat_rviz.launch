@@ -1,0 +1,19 @@
+<launch>
+  <param name="cubesat_description"
+    command="$(find xacro)/xacro --inorder '$(find cubesat_pkg)/urdf/cubesat.urdf.xacro'" />
+
+  <!-- send fake joint values -->
+  <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
+    <param name="use_gui" value="TRUE"/>
+  </node>
+
+  <!-- Combine joint values -->
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="false" output="screen">
+	<param name="publish_frequency" type="double" value="1000.0" />
+	</node>
+	
+  <!-- Show in Rviz   -->
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find cubesat_pkg)/launch/cubesat.rviz"/>
+
+</launch>
+

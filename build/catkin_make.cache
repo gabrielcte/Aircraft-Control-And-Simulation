@@ -1,0 +1,2 @@
+cubesat_pkg
+-DCATKIN_DEVEL_PREFIX=/home/gabriel/dev_ws/devel -DCMAKE_INSTALL_PREFIX=/home/gabriel/dev_ws/install -G Unix Makefiles
