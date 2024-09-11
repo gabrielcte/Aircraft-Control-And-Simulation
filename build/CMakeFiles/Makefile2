@@ -79,7 +79,7 @@ clean: cubesat_pkg/clean
 # Directory level rules for directory cubesat_pkg
 
 # Recursive "all" directory target.
-cubesat_pkg/all:
+cubesat_pkg/all: cubesat_pkg/CMakeFiles/hello_cpp_e.dir/all
 
 .PHONY : cubesat_pkg/all
 
@@ -89,6 +89,7 @@ cubesat_pkg/preinstall:
 .PHONY : cubesat_pkg/preinstall
 
 # Recursive "clean" directory target.
+cubesat_pkg/clean: cubesat_pkg/CMakeFiles/hello_cpp_e.dir/clean
 cubesat_pkg/clean: cubesat_pkg/CMakeFiles/std_msgs_generate_messages_py.dir/clean
 cubesat_pkg/clean: cubesat_pkg/CMakeFiles/std_msgs_generate_messages_nodejs.dir/clean
 cubesat_pkg/clean: cubesat_pkg/CMakeFiles/std_msgs_generate_messages_lisp.dir/clean
@@ -397,6 +398,33 @@ gtest: gtest/googletest/CMakeFiles/gtest.dir/rule
 gtest/googletest/CMakeFiles/gtest.dir/clean:
 	$(MAKE) -f gtest/googletest/CMakeFiles/gtest.dir/build.make gtest/googletest/CMakeFiles/gtest.dir/clean
 .PHONY : gtest/googletest/CMakeFiles/gtest.dir/clean
+
+#=============================================================================
+# Target rules for target cubesat_pkg/CMakeFiles/hello_cpp_e.dir
+
+# All Build rule for target.
+cubesat_pkg/CMakeFiles/hello_cpp_e.dir/all:
+	$(MAKE) -f cubesat_pkg/CMakeFiles/hello_cpp_e.dir/build.make cubesat_pkg/CMakeFiles/hello_cpp_e.dir/depend
+	$(MAKE) -f cubesat_pkg/CMakeFiles/hello_cpp_e.dir/build.make cubesat_pkg/CMakeFiles/hello_cpp_e.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/gabriel/dev_ws/build/CMakeFiles --progress-num=9,10 "Built target hello_cpp_e"
+.PHONY : cubesat_pkg/CMakeFiles/hello_cpp_e.dir/all
+
+# Build rule for subdir invocation for target.
+cubesat_pkg/CMakeFiles/hello_cpp_e.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/gabriel/dev_ws/build/CMakeFiles 2
+	$(MAKE) -f CMakeFiles/Makefile2 cubesat_pkg/CMakeFiles/hello_cpp_e.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/gabriel/dev_ws/build/CMakeFiles 0
+.PHONY : cubesat_pkg/CMakeFiles/hello_cpp_e.dir/rule
+
+# Convenience name for target.
+hello_cpp_e: cubesat_pkg/CMakeFiles/hello_cpp_e.dir/rule
+
+.PHONY : hello_cpp_e
+
+# clean rule for target.
+cubesat_pkg/CMakeFiles/hello_cpp_e.dir/clean:
+	$(MAKE) -f cubesat_pkg/CMakeFiles/hello_cpp_e.dir/build.make cubesat_pkg/CMakeFiles/hello_cpp_e.dir/clean
+.PHONY : cubesat_pkg/CMakeFiles/hello_cpp_e.dir/clean
 
 #=============================================================================
 # Target rules for target cubesat_pkg/CMakeFiles/std_msgs_generate_messages_py.dir

@@ -28,3 +28,6 @@ install(DIRECTORY worlds
   
 install(DIRECTORY config
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
+
+# Declare a C++ executable
+add_executable(hello_cpp_e src/hello_cpp_f.cpp)

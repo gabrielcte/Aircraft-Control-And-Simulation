@@ -37,6 +37,7 @@
 /home/gabriel/dev_ws/build/gtest/googletest/CMakeFiles/gtest.dir
 /home/gabriel/dev_ws/build/cubesat_pkg/CMakeFiles/install/strip.dir
 /home/gabriel/dev_ws/build/cubesat_pkg/CMakeFiles/install/local.dir
+/home/gabriel/dev_ws/build/cubesat_pkg/CMakeFiles/hello_cpp_e.dir
 /home/gabriel/dev_ws/build/cubesat_pkg/CMakeFiles/edit_cache.dir
 /home/gabriel/dev_ws/build/cubesat_pkg/CMakeFiles/test.dir
 /home/gabriel/dev_ws/build/cubesat_pkg/CMakeFiles/std_msgs_generate_messages_py.dir

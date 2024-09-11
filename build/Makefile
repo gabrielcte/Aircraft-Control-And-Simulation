@@ -285,6 +285,19 @@ gtest/fast:
 .PHONY : gtest/fast
 
 #=============================================================================
+# Target rules for targets named hello_cpp_e
+
+# Build rule for target.
+hello_cpp_e: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 hello_cpp_e
+.PHONY : hello_cpp_e
+
+# fast build rule for target.
+hello_cpp_e/fast:
+	$(MAKE) -f cubesat_pkg/CMakeFiles/hello_cpp_e.dir/build.make cubesat_pkg/CMakeFiles/hello_cpp_e.dir/build
+.PHONY : hello_cpp_e/fast
+
+#=============================================================================
 # Target rules for targets named std_msgs_generate_messages_py
 
 # Build rule for target.
@@ -371,6 +384,7 @@ help:
 	@echo "... gmock"
 	@echo "... gtest_main"
 	@echo "... gtest"
+	@echo "... hello_cpp_e"
 	@echo "... std_msgs_generate_messages_py"
 	@echo "... std_msgs_generate_messages_nodejs"
 	@echo "... std_msgs_generate_messages_lisp"

@@ -35,14 +35,20 @@ echo $ROS_PACKAGE_PATH
 
 ls
 cd src
-catkin_create_pkg cubesat_1u std_msgs rospy roscpp
+catkin_create_pkg cubesat_pkg std_msgs rospy roscpp
 
 cd ~/dev_ws
 catkin_make
 . ~/dev_ws/devel/setup.bash
 
-mkdir -p dev_ws/src/cubesat_1u/description
-mkdir -p dev_ws/src/cubesat_1u/launch
-mkdir -p dev_ws/src/cubesat_1u/worlds
-mkdir -p dev_ws/src/cubesat_1u/config
+mkdir -p dev_ws/src/cubesat_pkg/description
+mkdir -p dev_ws/src/cubesat_pkg/launch
+mkdir -p dev_ws/src/cubesat_pkg/worlds
+mkdir -p dev_ws/src/cubesat_pkg/config
 
+# Configurando o ROS Cpp
+
+cd ~/dev_ws/src
+catkin_create_pkg cubesat_pkg roscpp
+cd ..
+catkin_make

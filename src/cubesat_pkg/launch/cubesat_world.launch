@@ -34,5 +34,7 @@
 output="screen" args="--namespace=/cubesat  gazebo_ros_control"/> 
 
   <!-- include file="$(find cubesat_pkg)/launch/cubesat_control.launch" /-->
+  ]
+<node pkg="tf" type="static_transform_publisher" name="link1_broadcaster" args="0 0 -0.055 0 0 0 1 1U_link RDR3_link 100" />
 
 </launch>
