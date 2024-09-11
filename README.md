@@ -1,4 +1,4 @@
-# dev_ws
+# Laboratório Virtual para Cubesats
 ## Instalação do ROS Noetic
 
 
