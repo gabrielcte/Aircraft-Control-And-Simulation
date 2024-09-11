@@ -1,12 +1,16 @@
-# CubeSat tutorial
+# CubeSat1u tutorial
+
+Para executar a simulação
+
+cd ~/dev_ws
 
 catkin_make
 source devel/setup.bash
-roslaunch cubesat_pkg cubesat_rviz.launch
+roslaunch cubesat_pkg cubesat_world.launch
 
 
+Para verificar os sensores 
 rostopic list
-
 rostopic echo /imu
 rosrun joint_state_publisher_gui joint_state_publisher_gui
 
