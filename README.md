@@ -1,54 +1,48 @@
+# Virtual Laboratory for CubeSats Control
 
-# Laboratório Virtual para Cubesats
-## Instalação do ROS Noetic
+This repository contains scripts for:
 
+* Analysis of 6U Cubesat dynamics;
+* Design of the control algorithm for 6U Cubesat.
 
-sudo apt install curl # if you haven't already installed curl
+## Folders
 
-curl -sSL 'http://keyserver.ubuntu.com/pks/lookup?op=get&search=0xC1CF6E31E6BADE8868B172B4F42ED6FBAB17C654' | sudo apt-key add -
+| Pasta                    | Descrição                                                                                |
+| ------------------------ | ---------------------------------------------------------------------------------------- |
+| root                     | Contains scripts currently under development, evolving according to exploratory analyses |
+| [aircraft](./aircraft)   | Contains "aircraft" models that will be used in Flight Gear                              |
+| [engine](./engine)       | Contains engine models used by the "aircraft"                                            |
+| [scripts](./scripts)     | Contains initialization scripts for Flight Gear                                          |
+| [reference](./reference) | Contains manuals and documents used as reference for this work                           |
+| [doc](./doc)             | Contains my master teses                                                                 |
 
-sudo apt update
+## Softwares
 
-sudo apt install ros-noetic-desktop-full
+The 6U Cubesat control system analysis was conducted using three tools:
 
-sudo apt-get install ros-noetic-ros-control ros-noetic-ros-controllers
+| Tool                                        | Application                                                                                       |
+| ------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| [Flight Gear](https://www.flightgear.org/); | Graphical flight simulation software                                                              |
+| [JSBSim](https://jsbsim.sourceforge.net/);  | Software that implements the flight dynamics model of aerial and spacial vehicles                 |
+| [Python](https://www.python.org/);          | Multipurpose programming language. In this case, it's used to interact with FlightGear and JSBSim |
+| [Blender](https://www.blender.org/);        | Free and open-source 3D creation application that supports AC3D                                   |
 
-sudo apt install ros-noetic-core
+## Scripts
 
-source /opt/ros/noetic/setup.bash
+Segue uma descrição dos scripts que fazem parte da simulação:
 
-echo "source /opt/ros/noetic/setup.bash" >> ~/.bashrc
+| Script                | Descrição                                                                                                            |
+| --------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| cubesat_design.ipynb  | Preliminary design that defines data for the spacecraft, reaction wheels, and mission.                               |
+| dynamic_simulation.py | Simulation of the 6U cubesat mission with a non-linear model, where the equations of motion are integrated by JSBSim |
 
-sudo apt install python3-rosdep python3-rosinstall python3-rosinstall-generator python3-wstool build-essential
+### Runing the JSBSim by powershell
 
-sudo apt install python3-rosdep
+```powershell
+.\JSBSim.exe --realtime --script= .\scripts\cubesat_orbit.xml
+```
+### Flight Gear Additional Settings
 
-## Criando e configurando repositório 
-
-source /opt/ros/noetic/setup.bash
-mkdir -p dev_ws/src
-cd dev_ws
-catkin_make
-source devel/setup.bash
-echo $ROS_PACKAGE_PATH
-/home/youruser/catkin_ws/src:/opt/ros/kinetic/share
-
-ls
-cd src
-catkin_create_pkg cubesat_pkg std_msgs rospy roscpp
-
-cd ~/dev_ws
-catkin_make
-. ~/dev_ws/devel/setup.bash
-
-mkdir -p dev_ws/src/cubesat_pkg/description
-mkdir -p dev_ws/src/cubesat_pkg/launch
-mkdir -p dev_ws/src/cubesat_pkg/worlds
-mkdir -p dev_ws/src/cubesat_pkg/config
-
-# Configurando o ROS Cpp
-
-cd ~/dev_ws/src
-catkin_create_pkg cubesat_pkg roscpp
-cd ..
-catkin_make
+```
+fgfs --fdm=null --native-fdm=socket,in,60,localhost,5550,udp --httpd=8080
+```
