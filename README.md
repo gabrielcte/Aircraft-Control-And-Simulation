@@ -34,7 +34,7 @@ Bellow some description about the scripts:
 
 | Script                    | Description                                                                                                                   |
 | ------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
-| dynamic_simulation.ipynb  | Preliminary design that defines data for the spacecraft, reaction wheels, and mission.                                        |
+| dynamic_simulation.ipynb  | Preliminary analysis of trim, linearization for the aircraft, and mission.                                                    |
 | dynamic_simulation.py     | Simulation of the Cesna 172p aircraft mission with a non-linear model, where the equations of motion are integrated by JSBSim |
 
 ### Flight Gear Additional Settings
