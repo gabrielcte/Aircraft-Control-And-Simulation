@@ -1,20 +1,22 @@
-# Virtual Laboratory for CubeSats Control
+# Aircraft Control And Simulation
 
 This repository contains scripts for:
 
-* Analysis of 6U Cubesat dynamics;
-* Design of the control algorithm for 6U Cubesat.
+* Steady-State Trim;
+* Linearization;
+* Nonlinear Simulation;
+* Aircraft Control;
 
 ## Folders
 
-| Pasta                    | Descrição                                                                                |
+| Pasta                    | Description                                                                              |
 | ------------------------ | ---------------------------------------------------------------------------------------- |
 | root                     | Contains scripts currently under development, evolving according to exploratory analyses |
-| [aircraft](./aircraft)   | Contains "aircraft" models that will be used in Flight Gear                              |
-| [engine](./engine)       | Contains engine models used by the "aircraft"                                            |
+| [aircraft](./aircraft)   | Contains aircraft models that will be used in Flight Gear                                |
+| [engine](./engine)       | Contains engine models used by the aircraft                                              |
 | [scripts](./scripts)     | Contains initialization scripts for Flight Gear                                          |
 | [reference](./reference) | Contains manuals and documents used as reference for this work                           |
-| [doc](./doc)             | Contains my master teses                                                                 |
+
 
 ## Softwares
 
@@ -31,16 +33,11 @@ The 6U Cubesat control system analysis was conducted using three tools:
 
 Segue uma descrição dos scripts que fazem parte da simulação:
 
-| Script                | Descrição                                                                                                            |
-| --------------------- | -------------------------------------------------------------------------------------------------------------------- |
-| cubesat_design.ipynb  | Preliminary design that defines data for the spacecraft, reaction wheels, and mission.                               |
-| dynamic_simulation.py | Simulation of the 6U cubesat mission with a non-linear model, where the equations of motion are integrated by JSBSim |
+| Script                | Description                                                                                                                   |
+| --------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| cubesat_design.ipynb  | Preliminary design that defines data for the spacecraft, reaction wheels, and mission.                                        |
+| dynamic_simulation.py | Simulation of the Cesna 172p aircraft mission with a non-linear model, where the equations of motion are integrated by JSBSim |
 
-### Runing the JSBSim by powershell
-
-```powershell
-.\JSBSim.exe --realtime --script= .\scripts\cubesat_orbit.xml
-```
 ### Flight Gear Additional Settings
 
 ```
