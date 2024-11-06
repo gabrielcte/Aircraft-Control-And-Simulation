@@ -10,25 +10,29 @@ def ft2m(feet_value):
     meter_value = feet_value*0.3048
     return meter_value
 
+
 def m2ft(meter_value):
     feet_value = meter_value/0.3048
     return feet_value
+
 
 def Nm2Lbft(Nm):
     Lbft = Nm*0.7375621493
     return Lbft
 
+
 class FlightStages(Enum):
     flight_stage_0           = 0
     flight_stage_1           = 1
-    flight_stage_2           = 2   
+    flight_stage_2           = 2
+    flight_stage_3           = 3
 
 
 if __name__ == '__main__':
     
     # Simulação
 
-    realtime     = True
+    realtime     = False
     sim_period   = 3600
     num_steps = sim_period*100
     frame_time   = 0
@@ -48,11 +52,11 @@ if __name__ == '__main__':
 
     # Initial Conditions
     # Position
-    fdm['ic/lat-geod-rad'] = np.deg2rad(-23.432)     # Latitude (rad)
-    fdm['ic/long-gc-rad'] = np.deg2rad(-46.470)      # Longitude (rad)
-    fdm['ic/h-sl-ft'] = 2458                  # ft
-    fdm['ic/terrain-altitude-ft'] = 2458 
-    fdm['ic/h-agl-ft'] = m2ft(10)                    # ft
+    #fdm['ic/lat-geod-rad'] = np.deg2rad(-23.432)     # Latitude (rad)
+    #fdm['ic/long-gc-rad'] = np.deg2rad(-46.470)      # Longitude (rad)
+    #fdm['ic/h-sl-ft'] = m2ft(748)                # ft
+    #fdm['ic/terrain-altitude-ft'] = m2ft(748) 
+    fdm['ic/h-agl-ft'] = m2ft(1.43)                    # ft
 
     # Attitude
     fdm['ic/phi-rad'] =   np.deg2rad(0)                            # Roll (rad)
@@ -77,7 +81,7 @@ if __name__ == '__main__':
     
     #
     stage_0_duration = 3
-    V_take_off = m2ft(35) 
+    V_take_off = m2ft(30) 
 
     try:
            
@@ -110,6 +114,14 @@ if __name__ == '__main__':
 
                 if fdm.get_sim_time() > stage_0_duration:
                     print('Starting')
+                    op_cruise = trim.trim_wings_level_flight(
+                                fdm = fdm,
+                                ic_h_sl_ft = fdm['position/h-sl-ft'],
+                                ic_mach = fdm['velocities/mach'],
+                                ic_phi_rad = 0,
+                                ic_psi_rad = 0,
+                                ic_gamma_rad = np.deg2rad(0),
+                                debug_level=0)
                     flight_stage_current = FlightStages.flight_stage_1
                     #break
 
@@ -119,28 +131,62 @@ if __name__ == '__main__':
                     fdm['fcs/mixture-cmd-norm'] = 1
                     fdm['propulsion/magneto_cmd'] = 3
                     fdm['propulsion/starter_cmd'] = 1
+                    fdm['fcs/aileron-cmd-norm'] = op_cruise['fcs/aileron-cmd-norm']
+                    fdm['fcs/elevator-cmd-norm'] = op_cruise['fcs/elevator-cmd-norm']
+                    fdm['fcs/rudder-cmd-norm'] = op_cruise['fcs/rudder-cmd-norm']
+                    fdm['fcs/throttle-cmd-norm[0]'] = op_cruise['fcs/throttle-cmd-norm[0]']
                     
-                    if fdm['velocities/vt-fps'] > V_take_off and fdm['position/h-agl-ft'] > m2ft(10):
-                        print('Starting')
+                    if fdm['velocities/vt-fps'] > V_take_off:
+                        print('Pull Up')
+                        op_pull_up = trim.trim_pull_up(
+                                    fdm = fdm,
+                                    ic_h_sl_ft = fdm['position/h-sl-ft'],
+                                    ic_mach = fdm['velocities/mach'],
+                                    ic_q = np.deg2rad(1),
+                                    ic_gamma = np.deg2rad(10),
+                                    debug_level=0)
                         flight_stage_current = FlightStages.flight_stage_2
                         #break
+
             elif flight_stage_current == FlightStages.flight_stage_2:
-                    op_climb = trim.trim_wings_level_flight(
-                        fdm = fdm,
-                        ic_h_sl_ft = fdm['position/h-sl-ft'],
-                        ic_mach = fdm['velocities/mach'],
-                        ic_phi_rad = fdm['attitude/phi-rad'],
-                        ic_psi_rad = fdm['attitude/psi-rad'],
-                        ic_gamma_rad = np.deg2rad(10),
-                        debug_level=0)
-                    break
+                    fdm['fcs/aileron-cmd-norm'] = op_pull_up['fcs/aileron-cmd-norm']
+                    fdm['fcs/elevator-cmd-norm'] = op_pull_up['fcs/elevator-cmd-norm']
+                    fdm['fcs/rudder-cmd-norm'] = op_pull_up['fcs/rudder-cmd-norm']
+                    fdm['fcs/throttle-cmd-norm[0]'] = op_pull_up['fcs/throttle-cmd-norm[0]'] 
 
                     
-                    if fdm['position/h-agl-ft'] > 500:
+                    if fdm['position/h-agl-ft'] > 30:
                         print('Starting')
-                        flight_stage_current = FlightStages.flight_stage_2
-                        break
-                
+                        op_climb = trim.trim_wings_level_flight(
+                                fdm = fdm,
+                                ic_h_sl_ft = fdm['position/h-sl-ft'],
+                                ic_mach = fdm['velocities/mach'],
+                                ic_phi_rad = 0,
+                                ic_psi_rad = fdm['attitude/psi-rad'],
+                                ic_gamma_rad = np.deg2rad(10),
+                                debug_level=0)
+                        flight_stage_current = FlightStages.flight_stage_3
+                        #break
+
+            elif flight_stage_current == FlightStages.flight_stage_3:
+                    fdm['fcs/aileron-cmd-norm'] = op_climb['fcs/aileron-cmd-norm']
+                    fdm['fcs/elevator-cmd-norm'] = op_climb['fcs/elevator-cmd-norm']
+                    fdm['fcs/rudder-cmd-norm'] = op_climb['fcs/rudder-cmd-norm']
+                    fdm['fcs/throttle-cmd-norm[0]'] = op_climb['fcs/throttle-cmd-norm[0]']
+                    #break
+                    #         
+                    if fdm.get_sim_time() > 1000:
+                        print('Starting')
+                        op_climb = trim.trim_wings_level_flight(
+                                fdm = fdm,
+                                ic_h_sl_ft = fdm['position/h-sl-ft'],
+                                ic_mach = fdm['velocities/mach'],
+                                ic_phi_rad = 0,
+                                ic_psi_rad = 0,
+                                ic_gamma_rad = np.deg2rad(10),
+                                debug_level=0)
+                        flight_stage_current = FlightStages.flight_stage_3
+                        #break
                 
             else:
                 raise Exception('### ERROR: undefined flight stage!')

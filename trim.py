@@ -97,12 +97,13 @@ def trim_wings_level_flight(fdm, ic_h_sl_ft, ic_mach, ic_phi_rad, ic_psi_rad, ic
             'ic/phi-rad': ic_phi_rad,
             'ic/psi-true-rad': ic_psi_rad,
             'ic/gamma-rad': ic_gamma_rad,
+            'fcs/flap-cmd-norm' : 0,
         },
         design_vector=[
+            'aero/alpha-rad',
             'fcs/aileron-cmd-norm',
             'fcs/elevator-cmd-norm',
             'fcs/rudder-cmd-norm',
-            'fcs/flap-cmd-norm',
             'fcs/mixture-cmd-norm',
             'fcs/throttle-cmd-norm[0]',
         ],
@@ -134,6 +135,39 @@ def trim_wings_level_flight(fdm, ic_h_sl_ft, ic_mach, ic_phi_rad, ic_psi_rad, ic
             ],
     )
     return operation_point
+
+def trim_pull_up(fdm, ic_h_sl_ft, ic_mach, ic_q, ic_gamma , debug_level=0):
+    op_pull_up = trim_optimization(
+        fdm=fdm,
+        ic={
+            'ic/h-sl-ft': ic_h_sl_ft,
+            'ic/mach': ic_mach,
+            'ic/phi-rad': 0.0,
+            'ic/psi-true-rad': 0.0,
+            'ic/gamma-rad': ic_gamma,
+            'ic/q-rad_sec': ic_q,
+        },
+        design_vector=[
+            'ic/alpha-rad',
+            'ic/beta-rad',
+            'fcs/aileron-cmd-norm',
+            'fcs/elevator-cmd-norm',
+            'fcs/rudder-cmd-norm',
+            'fcs/throttle-cmd-norm[0]',
+        ],
+        method='SLSQP',
+        eq_constraints= [
+            lambda fdm: fdm['aero/alphadot-rad_sec'],
+            lambda fdm: fdm['accelerations/vdot-ft_sec2'],
+            lambda fdm: fdm['accelerations/pdot-rad_sec2'],
+            lambda fdm: fdm['accelerations/qdot-rad_sec2'],
+            lambda fdm: fdm['accelerations/rdot-rad_sec2'],
+        ],
+        x0=[0,0,0,0,0,0.5],
+        debug_level = debug_level,
+        bounds=[[-1, 1], [-1, 1], [-1, 1], [-1, 1], [-1, 1], [0, 1]],
+    )
+    return op_pull_up
 
 
 if __name__ == '__main__':
@@ -174,6 +208,15 @@ if __name__ == '__main__':
     fdm['propulsion/starter_cmd'] = 1                                   
 
     fdm.run_ic()
+
+    op_pull_up = trim_pull_up(
+        fdm = fdm,
+        ic_h_sl_ft = 500,
+        ic_mach = 0.2,
+        ic_q = np.deg2rad(1),
+        ic_gamma = np.deg2rad(5),
+        debug_level=2)
+
 
     op_climb = trim_wings_level_flight(
                         fdm = fdm,
