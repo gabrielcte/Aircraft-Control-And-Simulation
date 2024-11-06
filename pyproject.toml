@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "labvirt-ws"
 version = "0.1.0"
-description = "Package of a Virtual Lab for control simulation of Cubesats"
+description = "Package for Aircraft Control and Simulation"
 authors = ["Gabriel Alves Silva <gabriel_cte@outlook.com>"]
 license = "GNU"
 readme = "README.md"

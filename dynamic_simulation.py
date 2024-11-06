@@ -3,9 +3,8 @@ import time
 from pathlib                import Path
 import numpy                as np
 from enum                   import Enum
-import matplotlib.pyplot    as plt
-import matplotlib.image     as mpimg
 import pandas               as pd
+import trim
 
 def ft2m(feet_value):
     meter_value = feet_value*0.3048
@@ -22,6 +21,7 @@ def Nm2Lbft(Nm):
 class FlightStages(Enum):
     flight_stage_0           = 0
     flight_stage_1           = 1
+    flight_stage_2           = 2   
 
 
 if __name__ == '__main__':
@@ -48,18 +48,19 @@ if __name__ == '__main__':
 
     # Initial Conditions
     # Position
-    fdm['ic/lat-geod-rad'] = np.deg2rad(-23.42)     # Latitude (rad)
-    fdm['ic/long-gc-rad'] = np.deg2rad(-46.47)      # Longitude (rad)
-    fdm['ic/h-sl-ft'] = m2ft(749)            # ft
-    fdm['ic/h-agl-ft'] = m2ft(3)            # ft
+    fdm['ic/lat-geod-rad'] = np.deg2rad(-23.432)     # Latitude (rad)
+    fdm['ic/long-gc-rad'] = np.deg2rad(-46.470)      # Longitude (rad)
+    fdm['ic/h-sl-ft'] = 2458                  # ft
+    fdm['ic/terrain-altitude-ft'] = 2458 
+    fdm['ic/h-agl-ft'] = m2ft(10)                    # ft
 
     # Attitude
     fdm['ic/phi-rad'] =   np.deg2rad(0)                            # Roll (rad)
     fdm['ic/theta-rad'] = np.deg2rad(0)                            # Pitch (rad)   
-    fdm['ic/psi-true-rad'] =   np.deg2rad(0)                       # Yaw (rad)
+    fdm['ic/psi-true-rad'] =   np.deg2rad(73.7)                       # Yaw (rad)
 
 
-     # Linear Velocities
+    # Linear Velocities
     fdm['ic/u-fps'] = m2ft(0)
     fdm['ic/v-fps'] = m2ft(0)
     fdm['ic/w-fps'] = m2ft(0)
@@ -75,24 +76,36 @@ if __name__ == '__main__':
     data = []
     
     #
-    stage_0_duration = 5
-    V_take_off = m2ft(100) 
+    stage_0_duration = 3
+    V_take_off = m2ft(35) 
 
     try:
            
         for i in range(num_steps):
 
             if flight_stage_current == FlightStages.flight_stage_0:
-                fdm['forces/hold-down'] =1
+                fdm['forces/hold-down'] = 1
+                fdm['propulsion/tank[0]/contents-lbs'] = 185
+                fdm['propulsion/tank[1]/contents-lbs'] = 185
+
                 # Configura vento
-                fdm['atmosphere/crosswind-fps'] = 0
-                fdm['atmosphere/headwind-fps'] = 0
-                fdm['atmosphere/gust-east-fps'] = 0
-                fdm['atmosphere/gust-down-fps'] = 0
-                fdm['atmosphere/gust-north-fps'] = 0
-                fdm['atmosphere/turb-gain'] = 0
-                fdm['atmosphere/turb-rate'] = 0
-                fdm['atmosphere/turb-rhythmicity'] = 0
+                ## Cross Wind
+                #fdm['atmosphere/crosswind-fps'] = 42.195246427529995 # Equivalente a 25 Knots
+
+                ## Head wind
+                #fdm['atmosphere/headwind-fps'] = 42.195246427529995 # Equivalente a 25 Knots 
+
+                ## Gust Wind
+                #fdm['atmosphere/gust-north-fps'] = 42.195246427529995 # Equivalente a 25 Knots
+                #fdm['atmosphere/gust-east-fps'] = 42.195246427529995 # Equivalente a 25 Knots
+                #fdm['atmosphere/gust-down-fps'] = 42.195246427529995 # Equivalente a 25 Knots
+
+                ## Turbulence
+                #fdm['atmosphere/turbulence/milspec/windspeed_at_20ft_AGL-fps'] = 1 
+                #fdm['atmosphere/turbulence/milspec/severity'] = 1
+                #fdm['atmosphere/turb-gain'] = 0
+                #fdm['atmosphere/turb-rate'] = 0
+                #fdm['atmosphere/turb-rhythmicity'] = 0
 
 
                 if fdm.get_sim_time() > stage_0_duration:
@@ -107,16 +120,33 @@ if __name__ == '__main__':
                     fdm['propulsion/magneto_cmd'] = 3
                     fdm['propulsion/starter_cmd'] = 1
                     
-                    if fdm['velocities/vt-fps'] > V_take_off:
+                    if fdm['velocities/vt-fps'] > V_take_off and fdm['position/h-agl-ft'] > m2ft(10):
                         print('Starting')
-                        flight_stage_current = FlightStages.flight_stage_1
+                        flight_stage_current = FlightStages.flight_stage_2
                         #break
+            elif flight_stage_current == FlightStages.flight_stage_2:
+                    op_climb = trim.trim_wings_level_flight(
+                        fdm = fdm,
+                        ic_h_sl_ft = fdm['position/h-sl-ft'],
+                        ic_mach = fdm['velocities/mach'],
+                        ic_phi_rad = fdm['attitude/phi-rad'],
+                        ic_psi_rad = fdm['attitude/psi-rad'],
+                        ic_gamma_rad = np.deg2rad(10),
+                        debug_level=0)
+                    break
+
+                    
+                    if fdm['position/h-agl-ft'] > 500:
+                        print('Starting')
+                        flight_stage_current = FlightStages.flight_stage_2
+                        break
                 
                 
             else:
                 raise Exception('### ERROR: undefined flight stage!')
             
-            new_data = {'sim-time-sec' : fdm.get_sim_time(),
+            new_data = {
+                        'sim-time-sec' : fdm.get_sim_time(),
                         'position/lat-geod-deg' : fdm['position/lat-geod-deg'],
                         'position/long-gc-deg' : fdm['position/long-gc-deg'],
                         'position/geod-alt-ft' : fdm['position/geod-alt-ft'],
@@ -145,6 +175,10 @@ if __name__ == '__main__':
                     Alpha: {fdm['aero/alpha-deg' ]:.2f} deg", end='\r', flush=True)
             
             fdm.run()
+            
+            if fdm['position/h-agl-ft'] < 0:
+                break                
+
 
             if realtime:
                 
