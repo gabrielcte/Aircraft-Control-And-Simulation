@@ -20,23 +20,22 @@ This repository contains scripts for:
 
 ## Softwares
 
-The 6U Cubesat control system analysis was conducted using three tools:
+The Aircraft simulation, control and system analysis was conducted using three tools:
 
 | Tool                                        | Application                                                                                       |
 | ------------------------------------------- | ------------------------------------------------------------------------------------------------- |
 | [Flight Gear](https://www.flightgear.org/); | Graphical flight simulation software                                                              |
 | [JSBSim](https://jsbsim.sourceforge.net/);  | Software that implements the flight dynamics model of aerial and spacial vehicles                 |
 | [Python](https://www.python.org/);          | Multipurpose programming language. In this case, it's used to interact with FlightGear and JSBSim |
-| [Blender](https://www.blender.org/);        | Free and open-source 3D creation application that supports AC3D                                   |
 
 ## Scripts
 
-Segue uma descrição dos scripts que fazem parte da simulação:
+Bellow some description about the scripts:
 
-| Script                | Description                                                                                                                   |
-| --------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
-| cubesat_design.ipynb  | Preliminary design that defines data for the spacecraft, reaction wheels, and mission.                                        |
-| dynamic_simulation.py | Simulation of the Cesna 172p aircraft mission with a non-linear model, where the equations of motion are integrated by JSBSim |
+| Script                    | Description                                                                                                                   |
+| ------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| dynamic_simulation.ipynb  | Preliminary design that defines data for the spacecraft, reaction wheels, and mission.                                        |
+| dynamic_simulation.py     | Simulation of the Cesna 172p aircraft mission with a non-linear model, where the equations of motion are integrated by JSBSim |
 
 ### Flight Gear Additional Settings
 
